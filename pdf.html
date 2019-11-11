@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Render Multi-page PDF in Canvas using PDFJS</title>
+  <style>
+    .canvas-wrapper {
+    margin-bottom: 16px;
+    }
+
+    canvas {
+    width: 95%;
+    margin: 0 auto;
+    display: block;
+    }
+  </style>
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="holder" ></div>
+<!-- partial -->
+  <script src='./pdf.js'></script>
+<script >
+    function renderPDF(url, canvasContainer, options) {
+
+options = options || { scale: 3 };
+    
+function renderPage(page) {
+    var viewport = page.getViewport(options.scale);
+    var wrapper = document.createElement("div");
+    wrapper.className = "canvas-wrapper";
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+    
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    wrapper.appendChild(canvas)
+    canvasContainer.appendChild(wrapper);
+    
+    page.render(renderContext);
+}
+
+function renderPages(pdfDoc) {
+    for(var num = 1; num <= pdfDoc.numPages; num++)
+        pdfDoc.getPage(num).then(renderPage);
+}
+
+PDFJS.disableWorker = true;
+PDFJS.getDocument(url).then(renderPages);
+
+}   
+
+
+renderPDF(newFunction(), document.getElementById('holder'));
+
+function newFunction() {
+return 'https://eceku.github.io/shomes/test.pdf';
+}
+</script>
+
+</body>
+</html>
